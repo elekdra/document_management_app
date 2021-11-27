@@ -113,17 +113,17 @@ public string GetCompany(){
         }
          else if((userDetails[0]=="ALL") && (userDetails[1]=="") && (userDetails[2]!="ALL")  )
          {
-                CommandText = CommandText+"WHERE trainingdetails_header.Training_ID="+userDetails[2];
+                CommandText = CommandText+" WHERE trainingdetails_header.Training_ID="+userDetails[2];
 
 
          }
           else if((userDetails[0]=="ALL") && (userDetails[1]!="") && (userDetails[2]=="ALL")  )
          {
-             CommandText = CommandText+"WHERE trainingdetails_header.Version="+userDetails[2];
+             CommandText = CommandText+" WHERE trainingdetails_header.Version="+userDetails[2];
          }
           else if((userDetails[0]=="ALL") && (userDetails[1]!="") && (userDetails[2]!="ALL")  )
          {
-              CommandText = CommandText+"WHERE trainingdetails_header.Version="+userDetails[1]+" AND trainingdetails_header.Training_ID= "+userDetails[2];
+              CommandText = CommandText+" WHERE trainingdetails_header.Version="+userDetails[1]+" AND trainingdetails_header.Training_ID= "+userDetails[2];
          }
           else if((userDetails[0]!="ALL") && (userDetails[1]=="") && (userDetails[2]=="ALL")  )
          {
@@ -131,19 +131,19 @@ public string GetCompany(){
          }
           else if((userDetails[0]!="ALL") && (userDetails[1]=="") && (userDetails[2]!="ALL")  )
          {
- CommandText = CommandText+"WHERE trainingdetails_header.Company_ID="+userDetails[0]+" AND trainingdetails_header.Training_ID= "+userDetails[2];
+ CommandText = CommandText+" WHERE trainingdetails_header.Company_ID="+userDetails[0]+" AND trainingdetails_header.Training_ID= "+userDetails[2];
     
 
          }
          
           else if((userDetails[0]!="ALL") && (userDetails[1]!="") && (userDetails[2]=="ALL")  )
          {
-             CommandText = CommandText+"WHERE trainingdetails_header.Company_ID="+userDetails[0]+" AND trainingdetails_header.Version= "+userDetails[1];
+             CommandText = CommandText+" WHERE trainingdetails_header.Company_ID="+userDetails[0]+" AND trainingdetails_header.Version= "+userDetails[1];
   
          }
          
         else{
- CommandText = CommandText+"WHERE trainingdetails_header.Company_ID="+userDetails[0]+" AND trainingdetails_header.Version= "+userDetails[1]+" AND trainingdetails_header.Training_ID="+userDetails[2];
+ CommandText = CommandText+" WHERE trainingdetails_header.Company_ID="+userDetails[0]+" AND trainingdetails_header.Version= "+userDetails[1]+" AND trainingdetails_header.Training_ID="+userDetails[2];
   
         }
             Console.WriteLine(CommandText);
