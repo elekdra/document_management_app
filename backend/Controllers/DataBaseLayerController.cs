@@ -93,5 +93,93 @@ public string GetCompany(){
         }
         
     }
+
+
+
+
+[HttpGet]
+  [Route("filter")]
+    public void GetFilteredList(string filterParameters){
+       
+        var userDetails = filterParameters.Split("|");
+        string cs = @"server=localhost;userid=root;password=fathimaadmin;database=DOCUMENT_MANAGEMENT";
+        using var con = new MySqlConnection(cs);
+        con.Open();
+        var CommandText=@"SELECT * FROM DOCUMENT_MANAGEMENT.trainingdetails_header INNER JOIN DOCUMENT_MANAGEMENT.trainingdetails_data ON trainingdetails_header.Training_index=trainingdetails_data.Training_index" ;
+        
+         if((userDetails[0]=="ALL") && (userDetails[1]=="") && (userDetails[2]=="ALL") )
+         {
+         CommandText =CommandText;
+        }
+         else if((userDetails[0]=="ALL") && (userDetails[1]=="") && (userDetails[2]!="ALL")  )
+         {
+                CommandText = CommandText+"WHERE trainingdetails_header.Training_ID="+userDetails[2];
+
+
+         }
+          else if((userDetails[0]=="ALL") && (userDetails[1]!="") && (userDetails[2]=="ALL")  )
+         {
+             CommandText = CommandText+"WHERE trainingdetails_header.Version="+userDetails[2];
+         }
+          else if((userDetails[0]=="ALL") && (userDetails[1]!="") && (userDetails[2]!="ALL")  )
+         {
+              CommandText = CommandText+"WHERE trainingdetails_header.Version="+userDetails[1]+" AND trainingdetails_header.Training_ID= "+userDetails[2];
+         }
+          else if((userDetails[0]!="ALL") && (userDetails[1]=="") && (userDetails[2]=="ALL")  )
+         {
+                CommandText = CommandText+" WHERE trainingdetails_header.Company_ID="+userDetails[0];
+         }
+          else if((userDetails[0]!="ALL") && (userDetails[1]=="") && (userDetails[2]!="ALL")  )
+         {
+ CommandText = CommandText+"WHERE trainingdetails_header.Company_ID="+userDetails[0]+" AND trainingdetails_header.Training_ID= "+userDetails[2];
+    
+
+         }
+         
+          else if((userDetails[0]!="ALL") && (userDetails[1]!="") && (userDetails[2]=="ALL")  )
+         {
+             CommandText = CommandText+"WHERE trainingdetails_header.Company_ID="+userDetails[0]+" AND trainingdetails_header.Version= "+userDetails[1];
+  
+         }
+         
+        else{
+ CommandText = CommandText+"WHERE trainingdetails_header.Company_ID="+userDetails[0]+" AND trainingdetails_header.Version= "+userDetails[1]+" AND trainingdetails_header.Training_ID="+userDetails[2];
+  
+        }
+            Console.WriteLine(CommandText);
+        using var cmd = new MySqlCommand(CommandText, con);
+        using MySqlDataReader rdr = cmd.ExecuteReader();
+        while(rdr.Read())
+        {
+                 Console.WriteLine("{0} {1}  ", rdr.GetInt32(0),
+                    rdr.GetString(1));
+        }
+    
+        
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  }
 }
