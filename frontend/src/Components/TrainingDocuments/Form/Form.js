@@ -1,10 +1,13 @@
-import React, { useRef ,useState} from 'react';
+import React, { useRef ,useState,useEffect} from 'react';
 import { Link } from 'react-router-dom';
 import './Form.css';
 import filter from '../../../assets/filter.png';
 import upload from '../../../assets/upload.png';
 import {useHistory} from 'react-router-dom';
 import FilterData from '../../../ApiServices/FilterData';
+import CompanyNames from '../../../ApiServices/CompanyNames';
+import TrainingNames from '../../../ApiServices/TrainingNames';
+
 
 function Form(props) {
   const history=useHistory();
@@ -13,7 +16,36 @@ function Form(props) {
   const [company,setCompany]=useState("ALL");
   const [version,setVersion]=useState();
   const [training,setTraining]=useState("ALL");
+ const [companies,setCompanies]=useState([]);
+ const [trainings,setTrainings]=useState([]);
+
  
+// company name data api calll
+
+const fetchCompanyData = () => {CompanyNames().then((value) => {
+  console.log(value.data);
+  let companies=value.data.split("|");
+  console.log(companies);
+  setCompanies(companies);
+});
+}
+useEffect(() => {
+ fetchCompanyData();
+}, [])
+
+// training name data api call
+
+const fetchTrainingData = () => {TrainingNames().then((value) => {
+  console.log(value.data);
+  let trainings=value.data.split("|");
+  
+  setTrainings(trainings);
+});
+}
+useEffect(() => {
+ fetchTrainingData();
+}, [])
+
 
   function handleChange() {
     console.log(props.item);
@@ -53,13 +85,16 @@ function Form(props) {
         </div>
         <div>
           <div>
-            <select onChange={(e)=>{setCompany(e.target.value)}} id='company'>
-              <option value='ALL' selected={(company=='ALL')} >ALL</option>
-              <option value='HPCL' selected={(company=='HPCL')}>HPCL</option>
-              <option value='IOCL' selected={(company=='IOCL')}>IOCL</option>
-              <option value='BPL'selected={(company=='BPL')} >BPL</option>
-              <option value='GRK'selected={(company=='GRK')}>GRK</option>
-            </select>
+           <select onChange={(e)=>{setCompany(e.target.value)}} id='company'>
+           <option value="ALL" selected={(company=="ALL")}>ALL</option>
+           {
+           companies.map(item => (
+            <option value={item} selected={(company=={item})}>{item}</option>
+          ))}
+          
+            </select> 
+            
+            
           </div>
         </div>
         <div>
@@ -70,11 +105,12 @@ function Form(props) {
         <div>
           <div>
             <select id='training' onChange={(e)=>{setTraining(e.target.value)}}>
-              <option value='ALL' selected={(training=='ALL')} >ALL</option>
-              <option value='file management' selected={(training=='file management')} >file management</option>
-              <option value='process management' selected={(training=='process management')} >process management</option>
-              <option value='security management' selected={(training=='security management')} >security management</option>
-              <option value='device management' selected={(training=='device management')} >device management</option>
+            <option value="ALL" selected={(training=="ALL")}>ALL</option>
+           {
+           trainings.map(item => (
+            <option value={item} selected={(training=={item})}>{item}</option>
+          ))}
+      
             </select>
           </div>
         </div>
@@ -93,19 +129,6 @@ function Form(props) {
           <div>
          <button  className='upload-button' onClick={()=>{ handleChange()}} > <img src={upload} alt='' />
               <span>Upload</span></button>
-            {/* <Link
-              to='/uploaddocument'
-              className='upload-button'
-              onClick={() => {
-                handleChange();
-                history.push('/uploaddocument',
-                 {state:{ fileItems:props.fileItems}},
-              );
-              }}
-            >
-              <img src={upload} alt='' />
-              <span>Upload</span>
-            </Link> */}
           </div>
         </div>
       </div>

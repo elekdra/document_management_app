@@ -44,11 +44,15 @@ public string GetCompany(){
         var CommandText = "SELECT * FROM DOCUMENT_MANAGEMENT.Company";
         using var cmd = new MySqlCommand(CommandText, con);
         using MySqlDataReader rdr = cmd.ExecuteReader();
+        var companyNames="";
         while (rdr.Read())
         { 
             Console.WriteLine("{0} {1}", rdr.GetInt32(0), rdr.GetString(1));
+            companyNames+=rdr.GetString(1)+"|";
         }    
-        return "";
+        Console.WriteLine(companyNames);
+        
+        return companyNames;
     }
     [HttpGet]
   [Route("training")]
@@ -56,14 +60,17 @@ public string GetCompany(){
         string cs = @"server=localhost;userid=root;password=fathimaadmin;database=DOCUMENT_MANAGEMENT";
         using var con = new MySqlConnection(cs);
         con.Open();
+        var trainingNames="";
         var CommandText = "SELECT * FROM DOCUMENT_MANAGEMENT.Training";
         using var cmd = new MySqlCommand(CommandText, con);
         using MySqlDataReader rdr = cmd.ExecuteReader();
         while (rdr.Read())
         { 
             Console.WriteLine("{0} {1}", rdr.GetInt32(0), rdr.GetString(1));
+            trainingNames+=rdr.GetString(1)+"|";
         }    
-        return "";
+        Console.WriteLine(trainingNames);
+        return trainingNames;
     }
   [HttpGet]
   [Route("authenticate")]
@@ -101,41 +108,74 @@ public string GetCompany(){
     public void GetFilteredList(string filterParameters){
        Console.WriteLine(filterParameters);
         var userDetails = filterParameters.Split("|");
+        
+        var emptyVersion="undefined";
         string cs = @"server=localhost;userid=root;password=fathimaadmin;database=DOCUMENT_MANAGEMENT";
         using var con = new MySqlConnection(cs);
         con.Open();
+        var Company_ID="SELECT company.COMPANY_ID FROM DOCUMENT_MANAGEMENT.company WHERE company.COMPANY_NAME="+@""""+userDetails[0]+@"""";
+        Console.WriteLine(Company_ID);
+        var Training_ID="SELECT training.Training_ID FROM DOCUMENT_MANAGEMENT.training WHERE training.TRAINING_NAME="+@""""+userDetails[2]+@"""";
+        Console.WriteLine(Training_ID);
+        using var cmd = new MySqlCommand(Company_ID, con);
+        
+        using var cmd2=new MySqlCommand(Training_ID,con);
+
+         using MySqlDataReader rdr1 = cmd.ExecuteReader();
+    
+        while (rdr1.Read())
+        { 
+              
+            userDetails[0]=rdr1.GetInt32(0).ToString();
+            
+        }   
+        con.Close();
+        con.Open();
+        Console.WriteLine(userDetails[0]);
+         using MySqlDataReader rdr2 = cmd2.ExecuteReader();
+    
+        while (rdr2.Read())
+        { 
+              
+            userDetails[2]=rdr2.GetInt32(0).ToString();
+            
+        }  
+        con.Close();
+        Console.WriteLine(userDetails[2]);
+
+      
         var CommandText=@"SELECT * FROM DOCUMENT_MANAGEMENT.trainingdetails_header INNER JOIN DOCUMENT_MANAGEMENT.trainingdetails_data ON trainingdetails_header.Training_index=trainingdetails_data.Training_index" ;
         
-         if((userDetails[0]=="ALL") && (userDetails[1]=="") && (userDetails[2]=="ALL") )
+         if((userDetails[0]=="ALL") && (userDetails[1]==emptyVersion) && (userDetails[2]=="ALL") )
          {
          CommandText =CommandText;
         }
-         else if((userDetails[0]=="ALL") && (userDetails[1]=="") && (userDetails[2]!="ALL")  )
+         else if((userDetails[0]=="ALL") && (userDetails[1]==emptyVersion) && (userDetails[2]!="ALL")  )
          {
                 CommandText = CommandText+" WHERE trainingdetails_header.Training_ID="+userDetails[2];
 
 
          }
-          else if((userDetails[0]=="ALL") && (userDetails[1]!="") && (userDetails[2]=="ALL")  )
+          else if((userDetails[0]=="ALL") && (userDetails[1]!=emptyVersion) && (userDetails[2]=="ALL")  )
          {
              CommandText = CommandText+" WHERE trainingdetails_header.Version="+userDetails[2];
          }
-          else if((userDetails[0]=="ALL") && (userDetails[1]!="") && (userDetails[2]!="ALL")  )
+          else if((userDetails[0]=="ALL") && (userDetails[1]!=emptyVersion) && (userDetails[2]!="ALL")  )
          {
               CommandText = CommandText+" WHERE trainingdetails_header.Version="+userDetails[1]+" AND trainingdetails_header.Training_ID= "+userDetails[2];
          }
-          else if((userDetails[0]!="ALL") && (userDetails[1]=="") && (userDetails[2]=="ALL")  )
+          else if((userDetails[0]!="ALL") && (userDetails[1]==emptyVersion) && (userDetails[2]=="ALL")  )
          {
                 CommandText = CommandText+" WHERE trainingdetails_header.Company_ID="+userDetails[0];
          }
-          else if((userDetails[0]!="ALL") && (userDetails[1]=="") && (userDetails[2]!="ALL")  )
+          else if((userDetails[0]!="ALL") && (userDetails[1]==emptyVersion) && (userDetails[2]!="ALL")  )
          {
  CommandText = CommandText+" WHERE trainingdetails_header.Company_ID="+userDetails[0]+" AND trainingdetails_header.Training_ID= "+userDetails[2];
     
 
          }
          
-          else if((userDetails[0]!="ALL") && (userDetails[1]!="") && (userDetails[2]=="ALL")  )
+          else if((userDetails[0]!="ALL") && (userDetails[1]!=emptyVersion) && (userDetails[2]=="ALL")  )
          {
              CommandText = CommandText+" WHERE trainingdetails_header.Company_ID="+userDetails[0]+" AND trainingdetails_header.Version= "+userDetails[1];
   
@@ -146,14 +186,16 @@ public string GetCompany(){
   
         }
             Console.WriteLine(CommandText);
-        using var cmd = new MySqlCommand(CommandText, con);
-        using MySqlDataReader rdr = cmd.ExecuteReader();
+            con.Open();
+        using var cmd3 = new MySqlCommand(CommandText, con);
+        using MySqlDataReader rdr = cmd3.ExecuteReader();
         while(rdr.Read())
         {
-                 Console.WriteLine("{0} {1} {2} {3} {4}  ", rdr.GetInt32(1),
-                    rdr.GetString(2),rdr.GetInt32(3),rdr.GetString(6),rdr.GetString(7));
+                Console.WriteLine("hiii");
+                Console.WriteLine("{0} {1} {2} {3} {4}  ", rdr.GetInt32(1),
+                rdr.GetString(2),rdr.GetInt32(3),rdr.GetString(6),rdr.GetString(7));
         }
-    
+    con.Close();
         
     }
 
@@ -165,9 +207,5 @@ public string GetCompany(){
         var status=true;
         return status;
     }
-
-
-
-  
  }
 }

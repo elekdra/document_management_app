@@ -106,8 +106,7 @@ function UploadFile(props) {
       console.log("upload");
 
       //upload mode activate
-      // let version = document.querySelector('#version').value;
-      // let reqminVersion = document.getElementById('reqmin').value;
+     
 
       if (lengthFiles > 0 && reqminVersion < version) {
         let fileName = document.getElementById("upload-file").files[0].name;
