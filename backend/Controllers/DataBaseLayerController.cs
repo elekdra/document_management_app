@@ -24,12 +24,12 @@ namespace backend.Controllers
 
 public MySqlConnection unv(){
              string cs = @"server=localhost;userid=root;password=fathimaadmin;database=DOCUMENT_MANAGEMENT";
-            Console.WriteLine(cs);
+           
 
             using var con = new MySqlConnection(cs);
             con.Open();
 
-            Console.WriteLine($"MySQL version : {con.ServerVersion}");
+          
             var cmd = new MySqlCommand();
         cmd.Connection = con;
     
@@ -47,10 +47,10 @@ public string GetCompany(){
         var companyNames="";
         while (rdr.Read())
         { 
-            Console.WriteLine("{0} {1}", rdr.GetInt32(0), rdr.GetString(1));
+            // Console.WriteLine("{0} {1}", rdr.GetInt32(0), rdr.GetString(1));
             companyNames+=rdr.GetString(1)+"|";
         }    
-        Console.WriteLine(companyNames);
+        
         
         return companyNames;
     }
@@ -66,10 +66,10 @@ public string GetCompany(){
         using MySqlDataReader rdr = cmd.ExecuteReader();
         while (rdr.Read())
         { 
-            Console.WriteLine("{0} {1}", rdr.GetInt32(0), rdr.GetString(1));
+            // Console.WriteLine("{0} {1}", rdr.GetInt32(0), rdr.GetString(1));
             trainingNames+=rdr.GetString(1)+"|";
         }    
-        Console.WriteLine(trainingNames);
+        // Console.WriteLine(trainingNames);
         return trainingNames;
     }
   [HttpGet]
@@ -81,7 +81,7 @@ public string GetCompany(){
         using var con = new MySqlConnection(cs);
         con.Open();
         var CommandText = @"SELECT COUNT(*) FROM DOCUMENT_MANAGEMENT.UserCredentials WHERE UserCredentials.USER_NAME="""+userDetails[0]+@""" and UserCredentials.PASSWORD="""+userDetails[1]+@"""" ;
-        Console.WriteLine(CommandText);
+        // Console.WriteLine(CommandText);
         using var cmd = new MySqlCommand(CommandText, con);
         using MySqlDataReader rdr = cmd.ExecuteReader();
         var count=0;
@@ -89,7 +89,7 @@ public string GetCompany(){
         { 
               
             count=rdr.GetInt32(0);
-            Console.WriteLine(count);
+            // Console.WriteLine(count);
         }    
         if(count>=1)
         {
@@ -106,7 +106,7 @@ public string GetCompany(){
 [HttpGet]
   [Route("getFilteredData")]
     public void GetFilteredList(string filterParameters){
-       Console.WriteLine(filterParameters);
+    //    Console.WriteLine(filterParameters);
         var userDetails = filterParameters.Split("|");
         
         var emptyVersion="undefined";
@@ -114,9 +114,9 @@ public string GetCompany(){
         using var con = new MySqlConnection(cs);
         con.Open();
         var Company_ID="SELECT company.COMPANY_ID FROM DOCUMENT_MANAGEMENT.company WHERE company.COMPANY_NAME="+@""""+userDetails[0]+@"""";
-        Console.WriteLine(Company_ID);
+        // Console.WriteLine(Company_ID);
         var Training_ID="SELECT training.Training_ID FROM DOCUMENT_MANAGEMENT.training WHERE training.TRAINING_NAME="+@""""+userDetails[2]+@"""";
-        Console.WriteLine(Training_ID);
+        // Console.WriteLine(Training_ID);
         using var cmd = new MySqlCommand(Company_ID, con);
         
         using var cmd2=new MySqlCommand(Training_ID,con);
@@ -131,7 +131,7 @@ public string GetCompany(){
         }   
         con.Close();
         con.Open();
-        Console.WriteLine(userDetails[0]);
+        // Console.WriteLine(userDetails[0]);
          using MySqlDataReader rdr2 = cmd2.ExecuteReader();
     
         while (rdr2.Read())
@@ -141,7 +141,7 @@ public string GetCompany(){
             
         }  
         con.Close();
-        Console.WriteLine(userDetails[2]);
+        // Console.WriteLine(userDetails[2]);
 
       
         var CommandText=@"SELECT * FROM DOCUMENT_MANAGEMENT.trainingdetails_header INNER JOIN DOCUMENT_MANAGEMENT.trainingdetails_data ON trainingdetails_header.Training_index=trainingdetails_data.Training_index" ;
@@ -185,7 +185,7 @@ public string GetCompany(){
  CommandText = CommandText+" WHERE trainingdetails_header.Company_ID="+userDetails[0]+" AND trainingdetails_header.Version= "+userDetails[1]+" AND trainingdetails_header.Training_ID="+userDetails[2];
   
         }
-            Console.WriteLine(CommandText);
+       
             con.Open();
         using var cmd3 = new MySqlCommand(CommandText, con);
         using MySqlDataReader rdr = cmd3.ExecuteReader();
@@ -203,7 +203,7 @@ public string GetCompany(){
 [HttpGet]
   [Route("getFileCheck")]
     public bool GetFileCheck(){
-        Console.WriteLine("file check in database");
+        
         var status=true;
         return status;
     }

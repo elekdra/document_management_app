@@ -26,7 +26,7 @@ namespace backend.Controllers
         public bool UserAuthenticate(string credentials)
         {
             var userDetails = credentials.Split("|");
-            Console.WriteLine(credentials);
+            
             var currentDirectory = System.IO.Directory.GetCurrentDirectory();
             string jsonPath = currentDirectory + @"\wwwroot\Credentials\Credentials.json";
             var userCredentials = System.IO.File.ReadAllText(jsonPath);
@@ -50,12 +50,12 @@ namespace backend.Controllers
             }
         }
 
- [HttpPut]
+        [HttpPut]
         [Route("filesave")]
         public IActionResult PutFileNames([FromBody] FileModel model)
         {  
             string cs = @"server=localhost;userid=root;password=fathimaadmin;database=DOCUMENT_MANAGEMENT";
-            Console.WriteLine(cs);
+           
             MySqlConnection con = new MySqlConnection(cs);
             con.Open();
             string companyId = "";
@@ -96,6 +96,7 @@ namespace backend.Controllers
                 {
                   if(reader.HasRows)
                   {
+                      Console.WriteLine("conflict");
                     return Conflict();
                   }
                 }   
@@ -154,6 +155,8 @@ namespace backend.Controllers
         [Route("filedelete")]
         public String GetFileDelete(string file)
         {
+            Console.WriteLine(file);
+
             string[] fileProperties = file.Split('|');
             string json = JsonFilePath();
             var jsonString = System.IO.File.ReadAllText(json);
@@ -178,7 +181,7 @@ namespace backend.Controllers
             {
                 System.IO.File.Delete(fileName);
             }
-            Console.WriteLine(file);
+            
             Console.WriteLine(fileName);
             return "File data deleted successfully";
         }
@@ -197,7 +200,7 @@ namespace backend.Controllers
         {
             var currentDirectory = System.IO.Directory.GetCurrentDirectory();
             string jsonPath = currentDirectory + @"\wwwroot\ConfigData\data.json";
-            Console.WriteLine(jsonPath);
+         
             return jsonPath;
         }
     }
