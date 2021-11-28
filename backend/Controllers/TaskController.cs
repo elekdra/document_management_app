@@ -50,8 +50,7 @@ namespace backend.Controllers
             }
         }
 
-
-        [HttpPut]
+ [HttpPut]
         [Route("filesave")]
         public IActionResult PutFileNames([FromBody] FileModel model)
         {  
@@ -108,8 +107,25 @@ namespace backend.Controllers
                 comm.Parameters.AddWithValue("@Version", model.Version);
                 comm.Parameters.AddWithValue("@Training_ID", trainingId);
                 comm.ExecuteNonQuery();
-                con.Close();
             }
+
+            string trainingIndex ="";
+            using (MySqlCommand readCommand = con.CreateCommand())
+            {
+                readCommand.CommandText = "select training_index from DOCUMENT_MANAGEMENT.trainingdetails_header where training_id = @Training_Id and company_id = @Company_Id and version = @Version";
+                readCommand.Parameters.AddWithValue("Training_Id", trainingId);
+                readCommand.Parameters.AddWithValue("Company_Id", companyId);
+                readCommand.Parameters.AddWithValue("Version", model.Version);
+                using(var reader = readCommand.ExecuteReader())
+                {
+                  if(reader.HasRows)
+                  {
+                    trainingIndex = reader.GetString(0);
+                    Console.WriteLine(trainingIndex);
+                  }
+                }   
+            }
+
             string webRootPath = environment.WebRootPath;
             string filesPath = Path.Combine(webRootPath, "files");
             string fileNamesave = $"{Path.GetFileNameWithoutExtension(model.FileName)}_{Guid.NewGuid().ToString()}{Path.GetExtension(model.FileName)}";
@@ -120,8 +136,19 @@ namespace backend.Controllers
             {
                 stream.Write(data, 0, data.Length);
             }
+
+            using (MySqlCommand comm = con.CreateCommand())
+            {
+                comm.CommandText = "INSERT INTO DOCUMENT_MANAGEMENT.trainingdetails_data(Training_Index,Filepath,minimum_version) VALUES(@Training_Index, @File_Path,@Minimum_Version)";
+                comm.Parameters.AddWithValue("@Training_Index", trainingIndex);
+                comm.Parameters.AddWithValue("@File_Path", path);
+                comm.Parameters.AddWithValue("@Minimum_Version", model.MinVersion);
+                comm.ExecuteNonQuery();
+                con.Close();
+            }
             return Ok();
         }
+         
 
         [HttpGet()]
         [Route("filedelete")]
@@ -174,4 +201,4 @@ namespace backend.Controllers
             return jsonPath;
         }
     }
-}
+} 

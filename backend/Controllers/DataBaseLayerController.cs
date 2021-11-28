@@ -191,7 +191,7 @@ public string GetCompany(){
         using MySqlDataReader rdr = cmd3.ExecuteReader();
         while(rdr.Read())
         {
-                Console.WriteLine("hiii");
+               
                 Console.WriteLine("{0} {1} {2} {3} {4}  ", rdr.GetInt32(1),
                 rdr.GetString(2),rdr.GetInt32(3),rdr.GetString(6),rdr.GetString(7));
         }
