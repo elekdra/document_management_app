@@ -94,13 +94,12 @@ public string GetCompany(){
         
     }
 
-
-
+ 
 
 [HttpGet]
-  [Route("filter")]
+  [Route("getFilteredData")]
     public void GetFilteredList(string filterParameters){
-       
+       Console.WriteLine(filterParameters);
         var userDetails = filterParameters.Split("|");
         string cs = @"server=localhost;userid=root;password=fathimaadmin;database=DOCUMENT_MANAGEMENT";
         using var con = new MySqlConnection(cs);
@@ -159,27 +158,16 @@ public string GetCompany(){
     }
 
 
+[HttpGet]
+  [Route("getFileCheck")]
+    public bool GetFileCheck(){
+        Console.WriteLine("file check in database");
+        var status=true;
+        return status;
+    }
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  
  }
 }

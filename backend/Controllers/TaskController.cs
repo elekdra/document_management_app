@@ -6,7 +6,7 @@ using backend.Models;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Hosting;
 using System.Reflection;
-
+using MySql.Data.MySqlClient;
 
 namespace backend.Controllers
 {
@@ -50,6 +50,7 @@ namespace backend.Controllers
    }
   }
 
+
   [HttpPut]
   [Route("filesave")]
   public IActionResult PutFileNames([FromBody] FileModel model)
@@ -65,39 +66,33 @@ namespace backend.Controllers
    {
     stream.Write(data, 0, data.Length);
    }
-   string json = JsonFilePath();
-   var jsonString = System.IO.File.ReadAllText(json);
-   object jsonObject = JsonConvert.DeserializeObject(jsonString);
-   var list = JsonConvert.DeserializeObject<List<FileModel>>(jsonString);
-   if (model.Mode == "upload")
-   {
-    model.FileContent = path;
-    list.Add(model);
-   }
-   else
-   {
-    //edit
-    foreach (var listItem in list)
-    {
-     if (listItem.Training == model.Training && listItem.Version == model.Version && listItem.Company == model.Company && listItem.FileName == model.FileName)
-     {
-      listItem.FileContent = path;
-      listItem.FileName = model.FileName;
-      listItem.Mode = model.Mode;
-     }
-    }
-   }
-   var convertedJson = JsonConvert.SerializeObject(list, Formatting.Indented);
-   System.IO.File.WriteAllText(json, convertedJson);
+ //database update
+ string cs = @"server=localhost;userid=root;password=fathimaadmin;database=DOCUMENT_MANAGEMENT";
+            Console.WriteLine(cs);
+
+            using var con = new MySqlConnection(cs);
+            con.Open();
+            MySqlCommand comm = con.CreateCommand();
+            comm.CommandText = "INSERT INTO DOCUMENT_MANAGEMENT.trainingdetails_header(Company_ID,Version,Training_ID) VALUES(@Company_ID, @Version,@Training_ID)";
+            comm.Parameters.AddWithValue("@Company_ID", "103");
+            comm.Parameters.AddWithValue("@Version", "6.9");
+            comm.Parameters.AddWithValue("@Training_ID", "1003");
+            
+            comm.ExecuteNonQuery();
+            con.Close();
+
    return Ok();
   }
+
+
+
 
   [HttpGet()]
   [Route("filedelete")]
   public String GetFileDelete(string file)
   {
+   
    string[] fileProperties = file.Split('|');
-
    string json = JsonFilePath();
    var jsonString = System.IO.File.ReadAllText(json);
    object jsonObject = JsonConvert.DeserializeObject(jsonString);
@@ -113,13 +108,16 @@ namespace backend.Controllers
    list.Remove(deletedItem);
    var convertedJson = JsonConvert.SerializeObject(list, Formatting.Indented);
    System.IO.File.WriteAllText(json, convertedJson);
-   string[] Files = Directory.GetFiles(@"\assignments\test\fathima-main\backend\wwwroot\files\");
-   Console.WriteLine(Files);
-   string fileName = @"\assignments\test\fathima-main\backend\wwwroot\files\" + fileProperties[0];
+   var currentDirectoryoffiles = System.IO.Directory.GetCurrentDirectory();
+   currentDirectoryoffiles=currentDirectoryoffiles+ @"\wwwroot\files\";
+   string[] Files = Directory.GetFiles(currentDirectoryoffiles);
+   string fileName = currentDirectoryoffiles + fileProperties[0];
    if (System.IO.File.Exists(fileName))
    {
     System.IO.File.Delete(fileName);
    }
+   Console.WriteLine(file);
+   Console.WriteLine(fileName);
    return "File data deleted successfully";
   }
 

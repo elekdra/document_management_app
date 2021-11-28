@@ -4,14 +4,16 @@ import './Form.css';
 import filter from '../../../assets/filter.png';
 import upload from '../../../assets/upload.png';
 import {useHistory} from 'react-router-dom';
+import FilterData from '../../../ApiServices/FilterData';
 
 function Form(props) {
   const history=useHistory();
-  console.log(props.fileItems);
+  console.log(props.fullfileData);
   const dataForm = useRef(null);
   const [company,setCompany]=useState("ALL");
-  const [version,setVersion]=useState("");
+  const [version,setVersion]=useState();
   const [training,setTraining]=useState("ALL");
+ 
 
   function handleChange() {
     console.log(props.item);
@@ -24,8 +26,12 @@ function Form(props) {
  );
   }
   function handleClick(e) {
-    e.preventDefault()
-    props.setFilter({company, version, training})
+    e.preventDefault();
+    console.log(company);
+    console.log(version);
+    console.log(training);
+   FilterData(company,version,training);
+    
   }
   return (
     <form ref={dataForm}>

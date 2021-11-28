@@ -1,89 +1,84 @@
-import React from 'react';
-import AdminHeader from '../AdminDashboard/AdminHeader/AdminHeader';
-import Back from './Back/Back';
-import Form from './Form/Form';
-import DocumentTable from './DocumentTable/DocumentTable';
-import { useState, useEffect } from 'react';
-import StartUpDefaultsValue from '../../ApiServices/StartUpLoadData';
-import axios from 'axios';
-function TrainingDocuments(props) {
+/* eslint-disable react-hooks/exhaustive-deps */
+import AdminHeader from "../AdminDashboard/AdminHeader/AdminHeader";
+import Back from "./Back/Back";
+import Form from "./Form/Form";
+import DocumentTable from "./DocumentTable/DocumentTable";
+import { useState, useEffect } from "react";
+import StartUpDefaultsValue from "../../ApiServices/StartUpLoadData";
+import axios from "axios";
+
+const Index = (props) => {
   const [fileItems, setFileItems] = useState("");
-  const [fullfileData, setFullFileData] = useState([]);
+  const [fullfileData, setFullFileData] = useState();
+  const [filter, setFilter] = useState({company: "ALL", version: "", training: "ALL"});
+
   let fullData;
-  let recordsFromServer = StartUpDefaultsValue().then((response) => {
-    fullData = response.data;
-    fullData.forEach((item) => {
-      let temp = item.FileContent.split('\\');
-      item.FileContent = 'http://localhost:5000/files/' + temp[7];
-    });
-   // setFileItems(fullData);
-     
-    // setFullFileData(fullData);
-  });
-  console.log(fullData);
-  // setFileItems(fullData);
-  const [filter, setFilter] = useState({
-    company: 'ALL',
-    version: '',
-    training: 'ALL',
-  });
+
+  const fetchData = () => {
+     StartUpDefaultsValue().then((response) => {
+       fullData = response.data;
+      //  console.log(fullData);
+      //  setFullFileData(fullData)
+
+       fullData.forEach((item) => {
+         let temp = item.FileContent.split("\\");
+         item.FileContent = "http://localhost:5000/files/" + temp[7];
+       });
+
+       setFullFileData(fullData);
+     });
+  }
+ 
+
 
   useEffect(() => {
-    StartUpDefaultsValue();
-    return () => {
-      setFileItems([]);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    };
-  }, []);
+    fetchData();
+  },[]);
 
-  useEffect(() => {
-    filterTheLists();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filter]);
+  // useEffect(() => {
+  //   filterTheLists();
+  // }, [filter]);
 
-  function filterByID(item) {
-    let { company, version, training } = filter;
-    if (
-      (item.Company === company || company === 'ALL') &&
-      (item.Version === version || version === '') &&
-      (item.Training === training || training === 'ALL')
-    ) {
-      return true;
-    }
-    return false;
-  }
+  // const filterByID = (item) => {
+  //   let { company, version, training } = filter;
+  //   if (
+  //     (item.Company === company || company === "ALL") &&
+  //     (item.Version === version || version === "") &&
+  //     (item.Training === training || training === "ALL")
+  //   ) {
+  //     return true;
+  //   }
+  //   return false;
+  // };
 
-  let arrFiltered = [];
+  // let arrFiltered = [];
 
-  function filterTheLists() {
-    arrFiltered = fullfileData.filter(filterByID);
-    setFileItems(arrFiltered);
-  }
+  // const filterTheLists = () => {
+  //   arrFiltered = fullfileData.filter(filterByID);
+  //   setFileItems(arrFiltered);
+  // };
+
   return (
-    <div className='training'>
-      <Back page='/trainingdocuments' />
+    <div className="training">
+      <Back page="/trainingdocuments" />
       <AdminHeader
-        style={{ marginTop: '1rem', padding: '1rem', borderTopColor: 'white' }}
-        className='doc-header'
-        title='Training Documents'
+        style={{ marginTop: "1rem", padding: "1rem", borderTopColor: "white" }}
+        className="doc-header"
+        title="Training Documents"
       />
-      <Form
+     <Form
         item={props}
-        fileItems={fileItems}
-        setFileItems={setFileItems}
         fullfileData={fullfileData}
-        setFilter={setFilter}
-      />
-      <DocumentTable
-        fileItems={fileItems}
-        setFileItems={setFileItems}
-        fullData={fullData}
+      />  
+    
+       <DocumentTable 
+        fullData={fullfileData}
         onDeleted={() => {
-          // StartUpDefaultsValue();
+          StartUpDefaultsValue();
         }}
-      />
+      /> 
     </div>
   );
-}
+};
 
-export default TrainingDocuments;
+export default Index;
