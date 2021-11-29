@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import StartUpDefaultsValue from "../../ApiServices/StartUpLoadData";
 import axios from "axios";
 
+
 const Index = (props) => {
   const [fileItems, setFileItems] = useState("");
   const [fullfileData, setFullFileData] = useState();
@@ -17,9 +18,6 @@ const Index = (props) => {
   const fetchData = () => {
      StartUpDefaultsValue().then((response) => {
        fullData = response.data;
-      //  console.log(fullData);
-      //  setFullFileData(fullData)
-
        fullData.forEach((item) => {
          let temp = item.FileContent.split("\\");
          item.FileContent = "http://localhost:5000/files/" + temp[7];
@@ -70,7 +68,6 @@ const Index = (props) => {
         item={props}
         fullfileData={fullfileData}
       />  
-    
        <DocumentTable 
         fullData={fullfileData}
         onDeleted={() => {

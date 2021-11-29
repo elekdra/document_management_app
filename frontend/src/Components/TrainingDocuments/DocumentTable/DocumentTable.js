@@ -4,6 +4,7 @@ import edit from '../../../assets/edit.png';
 import deleted from '../../../assets/deleted.png';
 import { useHistory } from 'react-router';
 import './DocumentTable.css';
+import {useState,useEffect} from 'react';
 
 const paginationComponentOptions = {
     rowsPerPageText: 'No of Rows per page',
@@ -12,8 +13,10 @@ const paginationComponentOptions = {
   };
 
 function DocumentTable(props) {
+   const [data,setData]=useState();
     const history = useHistory();
     const columns = [
+     
       {
         name: 'Name',
         selector: (row) => row.FileName,
@@ -80,35 +83,47 @@ function DocumentTable(props) {
     ];
     function deleteFile(fileName, fileVersion, fileCompany) {
       var userPreference;
-  
+      console.log("filename is:",fileName);
+    //  console.log("id is:",ID);
       // eslint-disable-next-line no-restricted-globals
-      if (confirm('Deleted File Cant be Restored?') === true) {
-        userPreference = 'Data saved successfully!';
+      // if (confirm('Deleted File Cant be Restored?') === true) {
+      //   userPreference = 'Data saved successfully!';
   
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function () {
-          if (this.readyState === 4 && this.status === 200) {
-            props.onDeleted();
-            console.log(props);
-          }
-        };
-        xhttp.open(
-          'GET',
-          'http://localhost:5000/api/task/filedelete?file=' +
-            fileName +
-            '|' +
-            fileVersion +
-            '|' +
-            fileCompany,
-          true
-        );
-        xhttp.send();
-      } else {
-        userPreference = 'Save Cancelled!';
-      }
+      //   var xhttp = new XMLHttpRequest();
+      //   xhttp.onreadystatechange = function () {
+      //     if (this.readyState === 4 && this.status === 200) {
+      //       props.onDeleted();
+      //       console.log(props);
+      //     }
+      //   };
+      //   xhttp.open(
+      //     'GET',
+      //     'http://localhost:5000/api/task/filedelete?file=' +
+      //       fileName +
+      //       '|' +
+      //       fileVersion +
+      //       '|' +
+      //       fileCompany,
+      //     true
+      //   );
+      //   xhttp.send();
+      // } else {
+      //   userPreference = 'Save Cancelled!';
+      // }
     }
 
-  let data=props.fullData;
+    const handleData=()=>{
+  
+
+      setData(props.fullData);
+      console.log("data is:",data);
+    }
+
+useEffect(() => {
+handleData();
+  
+}, [handleData])
+
   return (
     <div className='datatable-items'>
       <DataTable

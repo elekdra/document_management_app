@@ -54,6 +54,8 @@ namespace backend.Controllers
         [Route("filesave")]
         public IActionResult PutFileNames([FromBody] FileModel model)
         {  
+            Console.WriteLine(model.Mode);
+            if(model.Mode=="upload"){
             string cs = @"server=localhost;userid=root;password=fathimaadmin;database=DOCUMENT_MANAGEMENT";
            
             MySqlConnection con = new MySqlConnection(cs);
@@ -146,6 +148,7 @@ namespace backend.Controllers
                 comm.Parameters.AddWithValue("@Minimum_Version", model.MinVersion);
                 comm.ExecuteNonQuery();
                 con.Close();
+            }
             }
             return Ok();
         }

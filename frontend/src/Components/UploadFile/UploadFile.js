@@ -110,7 +110,7 @@ function UploadFile(props) {
 
       if (lengthFiles > 0 && reqminVersion < version) {
         let fileName = document.getElementById("upload-file").files[0].name;
-        FileCheck().then((response) => {
+        FileCheck(company,version,training,fileName).then((response) => {
           let status = response.data;
           console.log(status);
           if (status === true) {
